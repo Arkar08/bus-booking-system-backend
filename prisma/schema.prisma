@@ -1,0 +1,90 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+
+model User {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String   @unique
+  phone     Int
+  password  String
+  role      String   @default("User")
+  booked    Booked[]
+}
+
+model Route {
+  id          Int      @id @default(autoincrement())
+  source      String
+  destination String
+  duration    String
+  distance    Int
+  bus         Bus[]
+  trip        Trip[]
+}
+
+model Bus {
+  id          Int      @id @default(autoincrement())
+  bus_number  String
+  type        String
+  total_seats Int
+  driver_name String
+  route       Route    @relation(fields: [routeId], references: [id])
+  routeId     Int
+  trip        Trip[]
+}
+
+model Trip {
+  id             Int       @id @default(autoincrement())
+  bus            Bus       @relation(fields: [busId], references: [id])
+  busId          Int
+  route          Route     @relation(fields: [routeId], references: [id])
+  routeId        Int
+  departure_time DateTime
+  arrival_time   DateTime
+  trip_date      DateTime
+  price          Int
+  seat           Seat[]
+  booked         Booked[]
+}
+
+model Seat {
+  id          Int   @id @default(autoincrement())
+  seat_number String
+  is_booked   Boolean @default(false)
+  trip        Trip  @relation(fields: [tripId], references: [id])
+  tripId      Int
+}
+
+model Booked {
+  id          Int     @id @default(autoincrement())
+  user        User    @relation(fields: [userId], references: [id])
+  userId      Int
+  trip        Trip    @relation(fields: [tripId], references: [id])
+  tripId      Int
+  total_price Int
+  status      String  @default("Pending")
+  payment     Payment?
+}
+
+model Payment {
+  id             Int     @id @default(autoincrement())
+  booked         Booked  @relation(fields: [bookedId], references: [id])
+  bookedId       Int     @unique
+  amount         Int
+  payment_method String
+  payment_date   DateTime @default(now())
+  status         String   @default("Pending")
+}
