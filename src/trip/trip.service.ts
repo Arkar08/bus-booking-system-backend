@@ -47,6 +47,7 @@ export class TripService {
     if (findBus) {
       const findRoute = await this.prisma.bus.findFirst({
         where: {
+          id: busId,
           routeId: routeId,
         },
       });
@@ -137,8 +138,42 @@ export class TripService {
     }
   }
 
-  update(id: number, updateTripDto: UpdateTripDto) {
-    return `This action updates a #${id} trip`;
+  async update(id: number, updateTripDto: UpdateTripDto) {
+    const findData = await this.prisma.trip.findFirst({
+      where: {
+        id: id,
+      },
+    });
+    if (!findData) {
+      throw new HttpException(
+        {
+          status: HttpStatus.NOT_FOUND,
+          error: 'Trip Plan Not Found.',
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+        { cause: 'Trip Plan Not Found.' },
+      );
+    }
+    if (findData) {
+      const updateData = await this.prisma.trip.update({
+        where: {
+          id: id,
+        },
+        data: {
+          arrival_time: updateTripDto?.arrival_time,
+          departure_time: updateTripDto?.departure_time,
+          trip_date: updateTripDto?.trip_date,
+          price: updateTripDto?.price,
+        },
+      });
+      if (updateData) {
+        return {
+          status: HttpStatus.OK,
+          message: 'Update Trip Plan Successfully.',
+          data: updateData,
+        };
+      }
+    }
   }
 
   async remove(id: number) {
