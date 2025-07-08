@@ -37,7 +37,7 @@ model Route {
 
 model Bus {
   id          Int      @id @default(autoincrement())
-  bus_number  String
+  bus_number  String   @unique
   type        String
   total_seats Int
   driver_name String
