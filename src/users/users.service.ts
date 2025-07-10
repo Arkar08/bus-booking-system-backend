@@ -2,6 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UsersService {
@@ -75,11 +76,15 @@ export class UsersService {
       );
     }
 
+    const saltOrRounds = 10;
+    const hashPassword = password;
+    const hash = await bcrypt.hash(hashPassword, saltOrRounds);
+
     const newUser = await this.prisma.user.create({
       data: {
         name: name,
         email: email,
-        password: password,
+        password: hash,
         phone: phone,
         role: role,
       },
@@ -201,6 +206,10 @@ export class UsersService {
       }
     }
 
+    const saltOrRounds = 10;
+    const hashPassword = updateUserDto?.password;
+    const hash = await bcrypt.hash(hashPassword, saltOrRounds);
+
     const updateData = await this.prisma.user.update({
       where: {
         id: id,
@@ -208,7 +217,7 @@ export class UsersService {
       data: {
         name: updateUserDto?.name,
         email: updateUserDto?.email,
-        password: updateUserDto?.password,
+        password: hash,
         phone: updateUserDto?.phone,
       },
     });
