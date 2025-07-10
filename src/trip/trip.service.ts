@@ -106,13 +106,25 @@ export class TripService {
   }
 
   async findAll() {
-    const findData = await this.prisma.trip.findMany();
+    const findData = await this.prisma.trip.findMany({
+      include: {
+        bus: true,
+        route: true,
+      },
+    });
     if (findData) {
+      const postData = findData.map((data) => {
+        const list = data;
+        delete list.busId;
+        delete list.routeId;
+        return list;
+      });
+
       return {
         status: HttpStatus.OK,
         message: 'Fetch Trip Plan Successfully.',
-        length: findData.length,
-        data: findData,
+        length: postData.length,
+        data: postData,
       };
     }
   }
@@ -121,6 +133,11 @@ export class TripService {
     const findData = await this.prisma.trip.findFirst({
       where: {
         id: id,
+      },
+      include: {
+        route: true,
+        bus: true,
+        booked: true,
       },
     });
     if (!findData) {
@@ -134,10 +151,13 @@ export class TripService {
       );
     }
     if (findData) {
+      const list = findData;
+      delete list.busId;
+      delete list.routeId;
       return {
         status: HttpStatus.OK,
         message: 'Fetch Trip Plan Successfully.',
-        data: findData,
+        data: list,
       };
     }
   }

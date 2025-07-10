@@ -3,5 +3,5 @@ export class CreateUserDto {
   email: string;
   password: string;
   role: 'Admin' | 'User';
-  phone: number;
+  phone: string;
 }

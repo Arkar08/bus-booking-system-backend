@@ -54,7 +54,12 @@ export class RouteService {
   }
 
   async findAll() {
-    const findData = await this.prisma.route.findMany();
+    const findData = await this.prisma.route.findMany({
+      include: {
+        bus: true,
+        trip: true,
+      },
+    });
     if (findData) {
       return {
         status: HttpStatus.OK,
@@ -69,6 +74,10 @@ export class RouteService {
     const findData = await this.prisma.route.findFirst({
       where: {
         id: id,
+      },
+      include: {
+        bus: true,
+        trip: true,
       },
     });
     if (!findData) {

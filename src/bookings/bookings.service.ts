@@ -76,8 +76,21 @@ export class BookingsService {
     }
   }
 
-  findAll() {
-    return `This action returns all bookings`;
+  async findAll() {
+    const findData = await this.prisma.booked.findMany({
+      include: {
+        user: true,
+        trip: true,
+      },
+    });
+    if (findData) {
+      return {
+        status: HttpStatus.OK,
+        message: 'Fetch Booking Successfully.',
+        length: findData.length,
+        data: findData,
+      };
+    }
   }
 
   findOne(id: number) {

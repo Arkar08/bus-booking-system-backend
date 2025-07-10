@@ -106,13 +106,22 @@ export class SeatService {
   }
 
   async findAll() {
-    const findData = await this.prisma.seat.findMany();
+    const findData = await this.prisma.seat.findMany({
+      include: {
+        trip: true,
+      },
+    });
     if (findData) {
+      const postData = findData.map((data) => {
+        const list = data;
+        delete list.tripId;
+        return list;
+      });
       return {
         status: HttpStatus.OK,
         message: 'Fetch Seat Successfully.',
-        length: findData.length,
-        data: findData,
+        length: postData.length,
+        data: postData,
       };
     }
   }
@@ -121,6 +130,9 @@ export class SeatService {
     const findData = await this.prisma.seat.findFirst({
       where: {
         id: id,
+      },
+      include: {
+        trip: true,
       },
     });
     if (!findData) {
@@ -134,10 +146,12 @@ export class SeatService {
       );
     }
     if (findData) {
+      const list = findData;
+      delete list.tripId;
       return {
         status: HttpStatus.OK,
         message: 'Fetch Seat Successfully.',
-        data: findData,
+        data: list,
       };
     }
   }

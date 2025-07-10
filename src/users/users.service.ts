@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -11,8 +11,20 @@ export class UsersService {
     return 'This action adds a new user';
   }
 
-  findAll() {
-    return this.prisma.user.findMany();
+  async findAll() {
+    const findData = await this.prisma.user.findMany({
+      include: {
+        booked: true,
+      },
+    });
+    if (findData) {
+      return {
+        status: HttpStatus.OK,
+        message: 'Fetch User Successfully.',
+        length: findData.length,
+        data: findData,
+      };
+    }
   }
 
   findOne(id: number) {

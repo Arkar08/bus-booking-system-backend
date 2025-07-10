@@ -77,13 +77,22 @@ export class BusService {
   }
 
   async findAll() {
-    const findData = await this.prisma.bus.findMany();
+    const findData = await this.prisma.bus.findMany({
+      include: {
+        route: true,
+      },
+    });
     if (findData) {
+      const postData = findData.map((data) => {
+        const list = data;
+        delete list.routeId;
+        return list;
+      });
       return {
         status: HttpStatus.OK,
         message: 'Fetch Bus Successfully.',
-        length: findData.length,
-        data: findData,
+        length: postData.length,
+        data: postData,
       };
     }
   }
@@ -92,6 +101,9 @@ export class BusService {
     const findData = await this.prisma.bus.findFirst({
       where: {
         id: id,
+      },
+      include: {
+        route: true,
       },
     });
     if (!findData) {
@@ -105,10 +117,12 @@ export class BusService {
       );
     }
     if (findData) {
+      const list = findData;
+      delete list.routeId;
       return {
         status: HttpStatus.OK,
         message: 'Fetch Bus Successfully.',
-        data: findData,
+        data: list,
       };
     }
   }
