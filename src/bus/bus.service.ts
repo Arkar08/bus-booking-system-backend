@@ -51,6 +51,9 @@ export class BusService {
           routeId: findRoute.id,
           driver_name: driver_name,
         },
+        include: {
+          route: true,
+        },
       });
       if (newBus) {
         return {

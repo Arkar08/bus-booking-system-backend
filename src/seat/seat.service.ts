@@ -56,18 +56,50 @@ export class SeatService {
       }
 
       if (!findSeatNumber) {
-        const newSeat = await this.prisma.seat.create({
-          data: {
-            tripId: tripId,
-            seat_number: seat_number,
+        const findBusTotalSeat = await this.prisma.trip.findFirst({
+          where: {
+            id: tripId,
           },
         });
-        if (newSeat) {
-          return {
-            status: HttpStatus.CREATED,
-            message: 'Create Seat Successfully.',
-            data: newSeat,
-          };
+
+        const findBus = await this.prisma.bus.findFirst({
+          where: {
+            id: findBusTotalSeat.busId,
+          },
+        });
+
+        const searchTrip = await this.prisma.seat.findMany({
+          where: {
+            tripId: findBusTotalSeat.id,
+          },
+        });
+
+        if (searchTrip.length < findBus.total_seats - 1) {
+          const newSeat = await this.prisma.seat.create({
+            data: {
+              tripId: tripId,
+              seat_number: seat_number,
+            },
+            include: {
+              trip: true,
+            },
+          });
+          if (newSeat) {
+            return {
+              status: HttpStatus.CREATED,
+              message: 'Create Seat Successfully.',
+              data: newSeat,
+            };
+          }
+        } else {
+          throw new HttpException(
+            {
+              status: HttpStatus.BAD_REQUEST,
+              error: 'Bus Limit is full.',
+            },
+            HttpStatus.BAD_REQUEST,
+            { cause: 'Bus Limit is full.' },
+          );
         }
       }
     }

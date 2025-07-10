@@ -78,6 +78,10 @@ export class TripService {
               trip_date: trip_date,
               price: price,
             },
+            include: {
+              bus: true,
+              route: true,
+            },
           });
           if (newTrip) {
             return {
