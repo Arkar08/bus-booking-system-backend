@@ -1,26 +1,178 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateSeatDto } from './dto/create-seat.dto';
 import { UpdateSeatDto } from './dto/update-seat.dto';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class SeatService {
-  create(createSeatDto: CreateSeatDto) {
-    return 'This action adds a new seat';
+  constructor(private prisma: PrismaService) {}
+
+  async create(createSeatDto: CreateSeatDto) {
+    const { tripId, seat_number } = createSeatDto;
+    if (!tripId || !seat_number) {
+      throw new HttpException(
+        {
+          status: HttpStatus.NOT_FOUND,
+          error: 'Please Filled Out in the form field.',
+        },
+        HttpStatus.NOT_FOUND,
+        { cause: 'Please Filled Out in the form field.' },
+      );
+    }
+
+    const findTrip = await this.prisma.trip.findFirst({
+      where: {
+        id: tripId,
+      },
+    });
+    if (!findTrip) {
+      throw new HttpException(
+        {
+          status: HttpStatus.NOT_FOUND,
+          error: 'Trip Plan does not exist.',
+        },
+        HttpStatus.NOT_FOUND,
+        { cause: 'Trip Plan does not exist.' },
+      );
+    }
+
+    if (findTrip) {
+      const findSeatNumber = await this.prisma.seat.findFirst({
+        where: {
+          tripId: tripId,
+          seat_number: seat_number,
+        },
+      });
+
+      if (findSeatNumber) {
+        throw new HttpException(
+          {
+            status: HttpStatus.CONFLICT,
+            error: 'Seat number is already exist in this trip plan.',
+          },
+          HttpStatus.CONFLICT,
+          { cause: 'Seat number is already exist in this trip plan.' },
+        );
+      }
+
+      if (!findSeatNumber) {
+        const newSeat = await this.prisma.seat.create({
+          data: {
+            tripId: tripId,
+            seat_number: seat_number,
+          },
+        });
+        if (newSeat) {
+          return {
+            status: HttpStatus.CREATED,
+            message: 'Create Seat Successfully.',
+            data: newSeat,
+          };
+        }
+      }
+    }
   }
 
-  findAll() {
-    return `This action returns all seat`;
+  async findAll() {
+    const findData = await this.prisma.seat.findMany();
+    if (findData) {
+      return {
+        status: HttpStatus.OK,
+        message: 'Fetch Seat Successfully.',
+        length: findData.length,
+        data: findData,
+      };
+    }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} seat`;
+  async findOne(id: number) {
+    const findData = await this.prisma.seat.findFirst({
+      where: {
+        id: id,
+      },
+    });
+    if (!findData) {
+      throw new HttpException(
+        {
+          status: HttpStatus.NOT_FOUND,
+          error: 'Seat Not Found.',
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+        { cause: 'Seat Not Found.' },
+      );
+    }
+    if (findData) {
+      return {
+        status: HttpStatus.OK,
+        message: 'Fetch Seat Successfully.',
+        data: findData,
+      };
+    }
   }
 
-  update(id: number, updateSeatDto: UpdateSeatDto) {
-    return `This action updates a #${id} seat`;
+  async update(id: number, updateSeatDto: UpdateSeatDto) {
+    const findData = await this.prisma.seat.findFirst({
+      where: {
+        id: id,
+      },
+    });
+    if (!findData) {
+      throw new HttpException(
+        {
+          status: HttpStatus.NOT_FOUND,
+          error: 'Seat Not Found.',
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+        { cause: 'Seat Not Found.' },
+      );
+    }
+    if (findData) {
+      const updateData = await this.prisma.seat.update({
+        where: {
+          id: id,
+        },
+        data: {
+          is_booked: updateSeatDto?.is_booked,
+        },
+      });
+      if (updateData) {
+        return {
+          status: HttpStatus.OK,
+          message: 'Update Seat Successfully.',
+          data: updateData,
+        };
+      }
+    }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} seat`;
+  async remove(id: number) {
+    const findData = await this.prisma.seat.findFirst({
+      where: {
+        id: id,
+      },
+    });
+    if (!findData) {
+      throw new HttpException(
+        {
+          status: HttpStatus.NOT_FOUND,
+          error: 'Seat Not Found.',
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+        { cause: 'Seat Not Found.' },
+      );
+    }
+    if (findData) {
+      const deleteData = await this.prisma.seat.delete({
+        where: {
+          id: id,
+        },
+      });
+      if (deleteData) {
+        return {
+          status: HttpStatus.OK,
+          message: 'Delete Seat Successfully.',
+        };
+      }
+    }
   }
 }

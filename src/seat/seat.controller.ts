@@ -6,6 +6,8 @@ import {
   Patch,
   Param,
   Delete,
+  HttpException,
+  HttpStatus,
 } from '@nestjs/common';
 import { SeatService } from './seat.service';
 import { CreateSeatDto } from './dto/create-seat.dto';
@@ -17,26 +19,81 @@ export class SeatController {
 
   @Post()
   create(@Body() createSeatDto: CreateSeatDto) {
-    return this.seatService.create(createSeatDto);
+    try {
+      return this.seatService.create(createSeatDto);
+    } catch (error) {
+      throw new HttpException(
+        {
+          status: HttpStatus.INTERNAL_SERVER_ERROR,
+          error: 'Something went wrong.',
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+        { cause: error },
+      );
+    }
   }
 
   @Get()
   findAll() {
-    return this.seatService.findAll();
+    try {
+      return this.seatService.findAll();
+    } catch (error) {
+      throw new HttpException(
+        {
+          status: HttpStatus.INTERNAL_SERVER_ERROR,
+          error: 'Something went wrong.',
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+        { cause: error },
+      );
+    }
   }
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.seatService.findOne(+id);
+    try {
+      return this.seatService.findOne(+id);
+    } catch (error) {
+      throw new HttpException(
+        {
+          status: HttpStatus.INTERNAL_SERVER_ERROR,
+          error: 'Something went wrong.',
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+        { cause: error },
+      );
+    }
   }
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateSeatDto: UpdateSeatDto) {
-    return this.seatService.update(+id, updateSeatDto);
+    try {
+      return this.seatService.update(+id, updateSeatDto);
+    } catch (error) {
+      throw new HttpException(
+        {
+          status: HttpStatus.INTERNAL_SERVER_ERROR,
+          error: 'Something went wrong.',
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+        { cause: error },
+      );
+    }
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.seatService.remove(+id);
+    try {
+      return this.seatService.remove(+id);
+    } catch (error) {
+      throw new HttpException(
+        {
+          status: HttpStatus.INTERNAL_SERVER_ERROR,
+          error: 'Something went wrong.',
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+        { cause: error },
+      );
+    }
   }
 }
