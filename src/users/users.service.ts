@@ -143,6 +143,7 @@ export class UsersService {
   }
 
   async update(id: number, updateUserDto: UpdateUserDto) {
+    let hash = '';
     if (updateUserDto?.email) {
       const findEmail = await this.prisma.user.findUnique({
         where: {
@@ -191,6 +192,10 @@ export class UsersService {
           { cause: 'Password should be greater than 6' },
         );
       }
+
+      const saltOrRounds = 10;
+      const hashPassword = updateUserDto?.password;
+      hash = await bcrypt.hash(hashPassword, saltOrRounds);
     }
 
     if (updateUserDto?.phone) {
@@ -205,10 +210,10 @@ export class UsersService {
         );
       }
     }
-
-    const saltOrRounds = 10;
-    const hashPassword = updateUserDto?.password;
-    const hash = await bcrypt.hash(hashPassword, saltOrRounds);
+    let status = '';
+    if (updateUserDto?.status) {
+      status = updateUserDto?.status;
+    }
 
     const updateData = await this.prisma.user.update({
       where: {
@@ -217,8 +222,9 @@ export class UsersService {
       data: {
         name: updateUserDto?.name,
         email: updateUserDto?.email,
-        password: hash,
+        password: updateUserDto?.password && hash,
         phone: updateUserDto?.phone,
+        status: status,
       },
     });
     if (updateData) {
@@ -262,5 +268,23 @@ export class UsersService {
         };
       }
     }
+  }
+
+  async validateEmail(email: string) {
+    const findEmail = await this.prisma.user.findUnique({
+      where: {
+        email: email,
+      },
+    });
+    return findEmail;
+  }
+
+  async validateActive(id: number) {
+    const findActive = await this.prisma.user.findFirst({
+      where: {
+        id: id,
+      },
+    });
+    return findActive;
   }
 }
