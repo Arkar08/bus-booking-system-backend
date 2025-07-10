@@ -287,4 +287,13 @@ export class UsersService {
     });
     return findActive;
   }
+
+  async validateName(name: string) {
+    const findName = await this.prisma.user.findFirst({
+      where: {
+        name: name,
+      },
+    });
+    return findName;
+  }
 }

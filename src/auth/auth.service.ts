@@ -17,6 +17,14 @@ export class AuthService {
   ) {}
 
   async SignIn(SignInUser: signIndto) {
+    const { email, password } = SignInUser;
+
+    if (!email || !password) {
+      throw new HttpException(
+        'Please Filled Out in the form field.',
+        HttpStatus.NOT_FOUND,
+      );
+    }
     const validator = await this.userSerive.validateEmail(SignInUser.email);
     if (!validator) {
       throw new UnauthorizedException();
@@ -55,7 +63,70 @@ export class AuthService {
   }
 
   async Register(registerUser: registerdto) {
-    console.log(registerUser);
+    const { name, email, password, phone } = registerUser;
+
+    if (!name || !email || !password || !phone) {
+      throw new HttpException(
+        'Please Filled Out in the form field.',
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    const validator = await this.userSerive.validateEmail(registerUser.email);
+    if (validator) {
+      throw new HttpException(
+        'Email is already exist.',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    const validatorName = await this.userSerive.validateName(registerUser.name);
+    if (validatorName) {
+      throw new HttpException('Name is already exist.', HttpStatus.BAD_REQUEST);
+    }
+
+    if (password.length < 6) {
+      throw new HttpException(
+        {
+          status: HttpStatus.BAD_REQUEST,
+          error: 'Password should be greater than 6',
+        },
+        HttpStatus.BAD_REQUEST,
+        { cause: 'Password should be greater than 6' },
+      );
+    }
+
+    if (phone.length > 11) {
+      throw new HttpException(
+        {
+          status: HttpStatus.BAD_REQUEST,
+          error: 'Phone Number should be less than 11',
+        },
+        HttpStatus.BAD_REQUEST,
+        { cause: 'Phone Number should be less than 11' },
+      );
+    }
+    const saltOrRounds = 10;
+    const hashPassword = password;
+    const hash = await bcrypt.hash(hashPassword, saltOrRounds);
+
+    const newUser = await this.prisma.user.create({
+      data: {
+        name: name,
+        email: email,
+        password: hash,
+        phone: phone,
+      },
+    });
+    return {
+      status: HttpStatus.OK,
+      message: 'Register Successfully.',
+      data: {
+        email: newUser.email,
+        role: newUser.role,
+        id: newUser.id,
+      },
+    };
   }
 
   async Logout() {
