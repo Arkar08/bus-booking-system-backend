@@ -14,19 +14,24 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum useStatus {
+  Active
+  Inactive
+}
 
 model User {
-  id        Int      @id @default(autoincrement())
-  name      String
-  email     String   @unique
-  phone     String
-  password  String
-  role      String   @default("User")
-  booked    Booked[]
+  id       Int       @id @default(autoincrement())
+  name     String
+  email    String    @unique
+  phone    String
+  password String
+  role     String    @default("User")
+  status   useStatus @default(Active)
+  booked   Booked[]
 }
 
 model Route {
-  id          Int      @id @default(autoincrement())
+  id          Int    @id @default(autoincrement())
   source      String
   destination String
   duration    String
@@ -36,21 +41,21 @@ model Route {
 }
 
 model Bus {
-  id          Int      @id @default(autoincrement())
-  bus_number  String   @unique
+  id          Int    @id @default(autoincrement())
+  bus_number  String @unique
   type        String
   total_seats Int
   driver_name String
-  route       Route    @relation(fields: [routeId], references: [id])
+  route       Route  @relation(fields: [routeId], references: [id])
   routeId     Int
   trip        Trip[]
 }
 
 model Trip {
-  id             Int       @id @default(autoincrement())
-  bus            Bus       @relation(fields: [busId], references: [id])
+  id             Int      @id @default(autoincrement())
+  bus            Bus      @relation(fields: [busId], references: [id])
   busId          Int
-  route          Route     @relation(fields: [routeId], references: [id])
+  route          Route    @relation(fields: [routeId], references: [id])
   routeId        Int
   departure_time DateTime
   arrival_time   DateTime
@@ -61,28 +66,28 @@ model Trip {
 }
 
 model Seat {
-  id          Int   @id @default(autoincrement())
+  id          Int     @id @default(autoincrement())
   seat_number String
   is_booked   Boolean @default(false)
-  trip        Trip  @relation(fields: [tripId], references: [id])
+  trip        Trip    @relation(fields: [tripId], references: [id])
   tripId      Int
 }
 
 model Booked {
-  id          Int     @id @default(autoincrement())
-  user        User    @relation(fields: [userId], references: [id])
+  id          Int      @id @default(autoincrement())
+  user        User     @relation(fields: [userId], references: [id])
   userId      Int
-  trip        Trip    @relation(fields: [tripId], references: [id])
+  trip        Trip     @relation(fields: [tripId], references: [id])
   tripId      Int
   total_price Int
-  status      String  @default("Pending")
+  status      String   @default("Pending")
   payment     Payment?
 }
 
 model Payment {
-  id             Int     @id @default(autoincrement())
-  booked         Booked  @relation(fields: [bookedId], references: [id])
-  bookedId       Int     @unique
+  id             Int      @id @default(autoincrement())
+  booked         Booked   @relation(fields: [bookedId], references: [id])
+  bookedId       Int      @unique
   amount         Int
   payment_method String
   payment_date   DateTime @default(now())
