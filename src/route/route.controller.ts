@@ -14,12 +14,16 @@ import { RouteService } from './route.service';
 import { CreateRouteDto } from './dto/create-route.dto';
 import { UpdateRouteDto } from './dto/update-route.dto';
 import { AuthGuard } from 'src/auth/auth.guard';
+import { Roles } from 'src/auth/roles/roles.decorator';
+import { Role } from 'src/auth/roles/roles.enum';
+import { RolesGuard } from 'src/auth/role/role.guard';
 
 @Controller('route')
 export class RouteController {
   constructor(private readonly routeService: RouteService) {}
 
-  @UseGuards(AuthGuard)
+  @Roles(Role.Admin)
+  @UseGuards(AuthGuard, RolesGuard)
   @Post()
   create(@Body() createRouteDto: CreateRouteDto) {
     try {
@@ -70,7 +74,8 @@ export class RouteController {
     }
   }
 
-  @UseGuards(AuthGuard)
+  @Roles(Role.Admin)
+  @UseGuards(AuthGuard, RolesGuard)
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateRouteDto: UpdateRouteDto) {
     try {
@@ -87,7 +92,8 @@ export class RouteController {
     }
   }
 
-  @UseGuards(AuthGuard)
+  @Roles(Role.Admin)
+  @UseGuards(AuthGuard, RolesGuard)
   @Delete(':id')
   remove(@Param('id') id: string) {
     try {

@@ -14,12 +14,16 @@ import { BusService } from './bus.service';
 import { CreateBusDto } from './dto/create-bus.dto';
 import { UpdateBusDto } from './dto/update-bus.dto';
 import { AuthGuard } from 'src/auth/auth.guard';
+import { Roles } from 'src/auth/roles/roles.decorator';
+import { Role } from 'src/auth/roles/roles.enum';
+import { RolesGuard } from 'src/auth/role/role.guard';
 
 @Controller('bus')
 export class BusController {
   constructor(private readonly busService: BusService) {}
 
-  @UseGuards(AuthGuard)
+  @Roles(Role.Admin)
+  @UseGuards(AuthGuard, RolesGuard)
   @Post()
   create(@Body() createBusDto: CreateBusDto) {
     try {
@@ -70,7 +74,8 @@ export class BusController {
     }
   }
 
-  @UseGuards(AuthGuard)
+  @Roles(Role.Admin)
+  @UseGuards(AuthGuard, RolesGuard)
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateBusDto: UpdateBusDto) {
     try {
@@ -87,7 +92,8 @@ export class BusController {
     }
   }
 
-  @UseGuards(AuthGuard)
+  @Roles(Role.Admin)
+  @UseGuards(AuthGuard, RolesGuard)
   @Delete(':id')
   remove(@Param('id') id: string) {
     try {

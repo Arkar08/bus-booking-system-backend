@@ -22,7 +22,8 @@ import { RolesGuard } from 'src/auth/role/role.guard';
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  @UseGuards(AuthGuard)
+  @Roles(Role.Admin)
+  @UseGuards(AuthGuard, RolesGuard)
   @Post()
   create(@Body() createUserDto: CreateUserDto) {
     try {
@@ -100,7 +101,8 @@ export class UsersController {
     }
   }
 
-  @UseGuards(AuthGuard)
+  @Roles(Role.Admin)
+  @UseGuards(AuthGuard, RolesGuard)
   @Delete(':id')
   remove(@Param('id') id: string) {
     try {
