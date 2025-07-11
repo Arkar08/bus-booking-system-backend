@@ -1,8 +1,8 @@
 {
   "name": "bus-booking-system",
   "version": "0.0.1",
-  "description": "",
-  "author": "",
+  "description": "This App is Bus Online Booking System",
+  "author": "Arkar",
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
