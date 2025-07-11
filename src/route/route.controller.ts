@@ -13,10 +13,10 @@ import {
 import { RouteService } from './route.service';
 import { CreateRouteDto } from './dto/create-route.dto';
 import { UpdateRouteDto } from './dto/update-route.dto';
-import { AuthGuard } from 'src/auth/auth.guard';
-import { Roles } from 'src/auth/roles/roles.decorator';
-import { Role } from 'src/auth/roles/roles.enum';
-import { RolesGuard } from 'src/auth/role/role.guard';
+import { AuthGuard } from '../auth/auth.guard';
+import { Roles } from '../auth/roles/roles.decorator';
+import { Role } from '../auth/roles/roles.enum';
+import { RolesGuard } from '../auth/role/role.guard';
 
 @Controller('route')
 export class RouteController {

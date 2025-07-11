@@ -1,7 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateBookingDto } from './dto/create-booking.dto';
-import { UpdateBookingDto } from './dto/update-booking.dto';
-import { PrismaService } from 'src/prisma/prisma.service';
+// import { UpdateBookingDto } from './dto/update-booking.dto';
+import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
 export class BookingsService {
@@ -97,9 +97,9 @@ export class BookingsService {
     return `This action returns a #${id} booking`;
   }
 
-  update(id: number, updateBookingDto: UpdateBookingDto) {
-    return `This action updates a #${id} booking`;
-  }
+  // update(id: number, updateBookingDto: UpdateBookingDto) {
+  //   return `This action updates a #${id} booking`;
+  // }
 
   remove(id: number) {
     return `This action removes a #${id} booking`;
