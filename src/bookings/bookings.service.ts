@@ -82,6 +82,7 @@ export class BookingsService {
       include: {
         user: true,
         trip: true,
+        payment: true,
       },
     });
     if (findData) {
