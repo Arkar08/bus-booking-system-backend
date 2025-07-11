@@ -107,6 +107,7 @@ export class SeatService {
 
   async findAll() {
     const findData = await this.prisma.seat.findMany({
+      take: 10,
       include: {
         trip: true,
       },
@@ -120,7 +121,10 @@ export class SeatService {
       return {
         status: HttpStatus.OK,
         message: 'Fetch Seat Successfully.',
-        length: postData.length,
+        pagination: {
+          currentPage: 1,
+          total: postData.length,
+        },
         data: postData,
       };
     }

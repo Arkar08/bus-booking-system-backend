@@ -100,6 +100,7 @@ export class UsersService {
 
   async findAll() {
     const findData = await this.prisma.user.findMany({
+      take: 10,
       include: {
         booked: true,
       },
@@ -113,7 +114,10 @@ export class UsersService {
       return {
         status: HttpStatus.OK,
         message: 'Fetch User Successfully.',
-        length: postData.length,
+        pagination: {
+          currentPage: 1,
+          total: postData.length,
+        },
         data: postData,
       };
     }

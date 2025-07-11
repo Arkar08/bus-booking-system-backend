@@ -107,6 +107,7 @@ export class TripService {
 
   async findAll() {
     const findData = await this.prisma.trip.findMany({
+      take: 10,
       include: {
         bus: true,
         route: true,
@@ -123,7 +124,10 @@ export class TripService {
       return {
         status: HttpStatus.OK,
         message: 'Fetch Trip Plan Successfully.',
-        length: postData.length,
+        pagination: {
+          currentPage: 1,
+          total: postData.length,
+        },
         data: postData,
       };
     }
