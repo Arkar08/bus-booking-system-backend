@@ -1,11 +1,11 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthGuard } from './auth.guard';
 import { Reflector } from '@nestjs/core';
-import { AuthController } from './auth.controller';
+import { AuthController } from '../../auth.controller';
 import { JwtService } from '@nestjs/jwt';
-import { AuthService } from './auth.service';
-import { UsersService } from '../users/users.service';
-import { PrismaService } from '../prisma/prisma.service';
+import { AuthService } from '../../auth.service';
+import { UsersService } from '../../../users/users.service';
+import { PrismaService } from '../../../prisma/prisma.service';
 
 describe('AuthGuard', () => {
   let guard: AuthGuard;

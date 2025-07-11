@@ -13,10 +13,10 @@ import {
 import { SeatService } from './seat.service';
 import { CreateSeatDto } from './dto/create-seat.dto';
 import { UpdateSeatDto } from './dto/update-seat.dto';
-import { AuthGuard } from '../auth/auth.guard';
-import { Roles } from '../auth/roles/roles.decorator';
-import { Role } from '../auth/roles/roles.enum';
-import { RolesGuard } from '../auth/role/role.guard';
+import { AuthGuard } from '../auth/guard/auth/auth.guard';
+import { Roles } from '../auth/guard/role/roles.decorator';
+import { Role } from '../auth/guard/role/roles.enum';
+import { RolesGuard } from '../auth/guard/role/role.guard';
 
 @Controller('seat')
 export class SeatController {

@@ -13,7 +13,7 @@ import {
 import { BookingsService } from './bookings.service';
 import { CreateBookingDto } from './dto/create-booking.dto';
 // import { UpdateBookingDto } from './dto/update-booking.dto';
-import { AuthGuard } from '../auth/auth.guard';
+import { AuthGuard } from '../auth/guard/auth/auth.guard';
 
 @Controller('bookings')
 export class BookingsController {

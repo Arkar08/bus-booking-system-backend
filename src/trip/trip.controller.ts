@@ -13,10 +13,10 @@ import {
 import { TripService } from './trip.service';
 import { CreateTripDto } from './dto/create-trip.dto';
 import { UpdateTripDto } from './dto/update-trip.dto';
-import { AuthGuard } from '../auth/auth.guard';
-import { RolesGuard } from '../auth/role/role.guard';
-import { Roles } from '../auth/roles/roles.decorator';
-import { Role } from '../auth/roles/roles.enum';
+import { AuthGuard } from '../auth/guard/auth/auth.guard';
+import { RolesGuard } from '../auth/guard/role/role.guard';
+import { Roles } from '../auth/guard/role/roles.decorator';
+import { Role } from '../auth/guard/role/roles.enum';
 
 @Controller('trip')
 export class TripController {
