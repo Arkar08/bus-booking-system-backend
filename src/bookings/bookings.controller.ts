@@ -3,16 +3,15 @@ import {
   Get,
   Post,
   Body,
-  // Patch,
+  Patch,
   Param,
-  Delete,
   HttpException,
   HttpStatus,
   UseGuards,
 } from '@nestjs/common';
 import { BookingsService } from './bookings.service';
 import { CreateBookingDto } from './dto/create-booking.dto';
-// import { UpdateBookingDto } from './dto/update-booking.dto';
+import { UpdateBookingDto } from './dto/update-booking.dto';
 import { AuthGuard } from '../auth/guard/auth/auth.guard';
 
 @Controller('bookings')
@@ -70,26 +69,10 @@ export class BookingsController {
     }
   }
 
-  // @Patch(':id')
-  // update(@Param('id') id: string, @Body() updateBookingDto: UpdateBookingDto) {
-  //   try {
-  //     return this.bookingsService.update(+id, updateBookingDto);
-  //   } catch (error) {
-  //     throw new HttpException(
-  //       {
-  //         status: HttpStatus.INTERNAL_SERVER_ERROR,
-  //         error: 'Something went wrong.',
-  //       },
-  //       HttpStatus.INTERNAL_SERVER_ERROR,
-  //       { cause: error },
-  //     );
-  //   }
-  // }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
+  @Patch(':id')
+  update(@Param('id') id: string, @Body() updateBookingDto: UpdateBookingDto) {
     try {
-      return this.bookingsService.remove(+id);
+      return this.bookingsService.update(+id, updateBookingDto);
     } catch (error) {
       throw new HttpException(
         {

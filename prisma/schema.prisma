@@ -86,5 +86,5 @@ model Payment {
   amount         Int
   payment_method String
   payment_date   DateTime @default(now())
-  status         String   @default("Pending")
+  status         String   @default("Paid")
 }

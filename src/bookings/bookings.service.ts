@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateBookingDto } from './dto/create-booking.dto';
-// import { UpdateBookingDto } from './dto/update-booking.dto';
+import { UpdateBookingDto } from './dto/update-booking.dto';
 import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
@@ -97,15 +97,67 @@ export class BookingsService {
     }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} booking`;
+  async findOne(id: number) {
+    const findData = await this.prisma.booked.findFirst({
+      where: {
+        id: id,
+      },
+      include: {
+        user: true,
+        trip: true,
+      },
+    });
+    if (!findData) {
+      throw new HttpException(
+        {
+          status: HttpStatus.NOT_FOUND,
+          error: 'Booking Not Found.',
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+        { cause: 'Booking Not Found.' },
+      );
+    }
+    if (findData) {
+      return {
+        status: HttpStatus.OK,
+        message: 'Fetch Booking Successfully.',
+        data: findData,
+      };
+    }
   }
 
-  // update(id: number, updateBookingDto: UpdateBookingDto) {
-  //   return `This action updates a #${id} booking`;
-  // }
-
-  remove(id: number) {
-    return `This action removes a #${id} booking`;
+  async update(id: number, updateBookingDto: UpdateBookingDto) {
+    const findData = await this.prisma.booked.findFirst({
+      where: {
+        id: id,
+      },
+    });
+    if (!findData) {
+      throw new HttpException(
+        {
+          status: HttpStatus.NOT_FOUND,
+          error: 'Booking Not Found.',
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+        { cause: 'Booking Not Found.' },
+      );
+    }
+    if (findData) {
+      const updateData = await this.prisma.booked.update({
+        where: {
+          id: id,
+        },
+        data: {
+          status: updateBookingDto?.status,
+        },
+      });
+      if (updateData) {
+        return {
+          status: HttpStatus.OK,
+          message: `${updateBookingDto?.status} Successuflly.`,
+          data: updateData,
+        };
+      }
+    }
   }
 }

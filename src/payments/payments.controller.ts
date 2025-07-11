@@ -1,42 +1,44 @@
 import {
   Controller,
   Get,
-  // Post,
-  // Body,
-  // Patch,
-  Param,
-  Delete,
+  Post,
+  Body,
+  HttpException,
+  HttpStatus,
+  UseGuards,
 } from '@nestjs/common';
 import { PaymentsService } from './payments.service';
-// import { CreatePaymentDto } from './dto/create-payment.dto';
-// import { UpdatePaymentDto } from './dto/update-payment.dto';
+import { CreatePaymentDto } from './dto/create-payment.dto';
+import { AuthGuard } from '../auth/guard/auth/auth.guard';
+import { Roles } from '../auth/guard/role/roles.decorator';
+import { Role } from '../auth/guard/role/roles.enum';
+import { RolesGuard } from '../auth/guard/role/role.guard';
 
 @Controller('payments')
 export class PaymentsController {
   constructor(private readonly paymentsService: PaymentsService) {}
 
-  // @Post()
-  // create(@Body() createPaymentDto: CreatePaymentDto) {
-  //   return this.paymentsService.create(createPaymentDto);
-  // }
+  @Roles(Role.Admin)
+  @UseGuards(AuthGuard, RolesGuard)
+  @Post()
+  create(@Body() createPaymentDto: CreatePaymentDto) {
+    return this.paymentsService.create(createPaymentDto);
+  }
 
+  @UseGuards(AuthGuard)
   @Get()
   findAll() {
-    return this.paymentsService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.paymentsService.findOne(+id);
-  }
-
-  // @Patch(':id')
-  // update(@Param('id') id: string, @Body() updatePaymentDto: UpdatePaymentDto) {
-  //   return this.paymentsService.update(+id, updatePaymentDto);
-  // }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.paymentsService.remove(+id);
+    try {
+      return this.paymentsService.findAll();
+    } catch (error) {
+      throw new HttpException(
+        {
+          status: HttpStatus.INTERNAL_SERVER_ERROR,
+          error: 'Something Went Wrong.',
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+        { cause: error },
+      );
+    }
   }
 }
