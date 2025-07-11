@@ -48,6 +48,7 @@ export class AuthService {
           const payload = {
             sub: validatorActive.id,
             username: validatorActive.name,
+            role: validatorActive.role,
           };
           return {
             status: HttpStatus.OK,
@@ -128,6 +129,7 @@ export class AuthService {
     const payload = {
       sub: newUser.id,
       username: newUser.name,
+      role: newUser.role,
     };
     return {
       status: HttpStatus.OK,

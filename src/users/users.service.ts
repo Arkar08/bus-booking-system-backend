@@ -105,11 +105,16 @@ export class UsersService {
       },
     });
     if (findData) {
+      const postData = findData.map((data) => {
+        const list = data;
+        delete list.password;
+        return list;
+      });
       return {
         status: HttpStatus.OK,
         message: 'Fetch User Successfully.',
-        length: findData.length,
-        data: findData,
+        length: postData.length,
+        data: postData,
       };
     }
   }
@@ -134,10 +139,12 @@ export class UsersService {
       );
     }
     if (findData) {
+      const postData = findData;
+      delete postData.password;
       return {
         status: HttpStatus.OK,
         message: 'Fetch User Successfully.',
-        data: findData,
+        data: postData,
       };
     }
   }
