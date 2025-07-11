@@ -8,15 +8,18 @@ import {
   Delete,
   HttpException,
   HttpStatus,
+  UseGuards,
 } from '@nestjs/common';
 import { RouteService } from './route.service';
 import { CreateRouteDto } from './dto/create-route.dto';
 import { UpdateRouteDto } from './dto/update-route.dto';
+import { AuthGuard } from 'src/auth/auth.guard';
 
 @Controller('route')
 export class RouteController {
   constructor(private readonly routeService: RouteService) {}
 
+  @UseGuards(AuthGuard)
   @Post()
   create(@Body() createRouteDto: CreateRouteDto) {
     try {
@@ -33,6 +36,7 @@ export class RouteController {
     }
   }
 
+  @UseGuards(AuthGuard)
   @Get()
   findAll() {
     try {
@@ -49,6 +53,7 @@ export class RouteController {
     }
   }
 
+  @UseGuards(AuthGuard)
   @Get(':id')
   findOne(@Param('id') id: string) {
     try {
@@ -65,6 +70,7 @@ export class RouteController {
     }
   }
 
+  @UseGuards(AuthGuard)
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateRouteDto: UpdateRouteDto) {
     try {
@@ -81,6 +87,7 @@ export class RouteController {
     }
   }
 
+  @UseGuards(AuthGuard)
   @Delete(':id')
   remove(@Param('id') id: string) {
     try {

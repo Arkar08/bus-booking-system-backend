@@ -8,15 +8,18 @@ import {
   Delete,
   HttpException,
   HttpStatus,
+  UseGuards,
 } from '@nestjs/common';
 import { BusService } from './bus.service';
 import { CreateBusDto } from './dto/create-bus.dto';
 import { UpdateBusDto } from './dto/update-bus.dto';
+import { AuthGuard } from 'src/auth/auth.guard';
 
 @Controller('bus')
 export class BusController {
   constructor(private readonly busService: BusService) {}
 
+  @UseGuards(AuthGuard)
   @Post()
   create(@Body() createBusDto: CreateBusDto) {
     try {
@@ -33,6 +36,7 @@ export class BusController {
     }
   }
 
+  @UseGuards(AuthGuard)
   @Get()
   findAll() {
     try {
@@ -49,6 +53,7 @@ export class BusController {
     }
   }
 
+  @UseGuards(AuthGuard)
   @Get(':id')
   findOne(@Param('id') id: string) {
     try {
@@ -65,6 +70,7 @@ export class BusController {
     }
   }
 
+  @UseGuards(AuthGuard)
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateBusDto: UpdateBusDto) {
     try {
@@ -81,6 +87,7 @@ export class BusController {
     }
   }
 
+  @UseGuards(AuthGuard)
   @Delete(':id')
   remove(@Param('id') id: string) {
     try {

@@ -9,11 +9,13 @@ import { signIndto } from './dto/signIn.dto';
 import { registerdto } from './dto/register.dto';
 import { UsersService } from 'src/users/users.service';
 import * as bcrypt from 'bcrypt';
+import { JwtService } from '@nestjs/jwt';
 @Injectable()
 export class AuthService {
   constructor(
     private userSerive: UsersService,
     private prisma: PrismaService,
+    private jwtService: JwtService,
   ) {}
 
   async SignIn(SignInUser: signIndto) {
@@ -43,6 +45,10 @@ export class AuthService {
           validator.id,
         );
         if (validatorActive.status === 'Active') {
+          const payload = {
+            sub: validatorActive.id,
+            username: validatorActive.name,
+          };
           return {
             status: HttpStatus.OK,
             message: 'Login Successfully.',
@@ -50,6 +56,7 @@ export class AuthService {
               email: validator.email,
               id: validator.id,
               role: validator.role,
+              token: await this.jwtService.signAsync(payload),
             },
           };
         } else {
@@ -118,6 +125,10 @@ export class AuthService {
         phone: phone,
       },
     });
+    const payload = {
+      sub: newUser.id,
+      username: newUser.name,
+    };
     return {
       status: HttpStatus.OK,
       message: 'Register Successfully.',
@@ -125,6 +136,7 @@ export class AuthService {
         email: newUser.email,
         role: newUser.role,
         id: newUser.id,
+        token: await this.jwtService.signAsync(payload),
       },
     };
   }
