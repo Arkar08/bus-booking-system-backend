@@ -144,6 +144,9 @@ export class AuthService {
   }
 
   async Logout() {
-    console.log('hello');
+    return {
+      status: HttpStatus.OK,
+      message: 'Logout Successfully.',
+    };
   }
 }

@@ -137,20 +137,6 @@ export class BusService {
         id: id,
       },
     });
-    const findBusNumber = await this.prisma.bus.findUnique({
-      where: { bus_number: updateBusDto?.bus_number },
-    });
-
-    if (findBusNumber) {
-      throw new HttpException(
-        {
-          status: HttpStatus.CONFLICT,
-          error: 'Bus Number is already exist.',
-        },
-        HttpStatus.CONFLICT,
-        { cause: 'Bus Number is already exist.' },
-      );
-    }
     if (!findData) {
       throw new HttpException(
         {
@@ -162,62 +148,22 @@ export class BusService {
       );
     }
     if (findData) {
-      if (updateBusDto.routeId) {
-        const findRoute = await this.prisma.route.findFirst({
-          where: {
-            id: updateBusDto?.routeId,
-          },
-        });
-        if (findRoute) {
-          const newData = await this.prisma.bus.update({
-            where: {
-              id: id,
-            },
-            data: {
-              bus_number: updateBusDto?.bus_number,
-              type: updateBusDto?.type,
-              total_seats: updateBusDto?.total_seats,
-              routeId: updateBusDto?.routeId,
-              driver_name: updateBusDto?.driver_name,
-            },
-          });
-          if (newData) {
-            return {
-              status: HttpStatus.OK,
-              message: 'Update Bus Successfully.',
-              data: newData,
-            };
-          }
-        }
-        if (!findRoute) {
-          throw new HttpException(
-            {
-              status: HttpStatus.NOT_FOUND,
-              error: 'Route does not exist.',
-            },
-            HttpStatus.NOT_FOUND,
-            { cause: 'Route does not exist.' },
-          );
-        }
-      } else {
-        const newData = await this.prisma.bus.update({
-          where: {
-            id: id,
-          },
-          data: {
-            bus_number: updateBusDto?.bus_number,
-            type: updateBusDto?.type,
-            total_seats: updateBusDto?.total_seats,
-            driver_name: updateBusDto?.driver_name,
-          },
-        });
-        if (newData) {
-          return {
-            status: HttpStatus.OK,
-            message: 'Update Bus Successfully.',
-            data: newData,
-          };
-        }
+      const newData = await this.prisma.bus.update({
+        where: {
+          id: id,
+        },
+        data: {
+          type: updateBusDto?.type,
+          total_seats: updateBusDto?.total_seats,
+          driver_name: updateBusDto?.driver_name,
+        },
+      });
+      if (newData) {
+        return {
+          status: HttpStatus.OK,
+          message: 'Update Bus Successfully.',
+          data: newData,
+        };
       }
     }
   }

@@ -12,11 +12,11 @@ import {
 } from '@nestjs/common';
 import { BusService } from './bus.service';
 import { CreateBusDto } from './dto/create-bus.dto';
-import { UpdateBusDto } from './dto/update-bus.dto';
 import { AuthGuard } from '../auth/guard/auth/auth.guard';
 import { Roles } from '../auth/guard/role/roles.decorator';
 import { Role } from '../auth/guard/role/roles.enum';
 import { RolesGuard } from '../auth/guard/role/role.guard';
+import { UpdateBusDto } from './dto/update-bus.dto';
 
 @Controller('bus')
 export class BusController {
