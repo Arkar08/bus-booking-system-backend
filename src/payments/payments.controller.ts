@@ -22,7 +22,18 @@ export class PaymentsController {
   @UseGuards(AuthGuard, RolesGuard)
   @Post()
   create(@Body() createPaymentDto: CreatePaymentDto) {
-    return this.paymentsService.create(createPaymentDto);
+    try {
+      return this.paymentsService.create(createPaymentDto);
+    } catch (error) {
+      throw new HttpException(
+        {
+          status: HttpStatus.INTERNAL_SERVER_ERROR,
+          error: 'Something Went Wrong.',
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+        { cause: error },
+      );
+    }
   }
 
   @UseGuards(AuthGuard)
